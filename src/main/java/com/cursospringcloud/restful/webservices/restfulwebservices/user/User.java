@@ -1,6 +1,8 @@
 package com.cursospringcloud.restful.webservices.restfulwebservices.user;
 
 import com.cursospringcloud.restful.webservices.restfulwebservices.post.Post;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
@@ -8,14 +10,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@ApiModel(description = "Todos os detalhes sobre o User.")
 public class User {
 
     private Integer id;
 
     @Size(min = 2, message = "Nome deve ter ao menos 2 caracteres")
+    @ApiModelProperty(notes = "Nome deve ter ao menos 2 caracteres")
     private String name;
 
     @Past(message = "Data de nascimento deve ser menor que a data atual")
+    @ApiModelProperty(notes = "Data de nascimento deve ser menor que a data atual")
     private Date birthDate;
 
     private List<Post> posts;
