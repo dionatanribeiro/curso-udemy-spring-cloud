@@ -4,6 +4,10 @@ import com.cursospringcloud.restful.webservices.restfulwebservices.post.Post;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -11,8 +15,11 @@ import java.util.Date;
 import java.util.List;
 
 @ApiModel(description = "Todos os detalhes sobre o User.")
+@Entity
 public class User {
 
+    @Id
+    @GeneratedValue
     private Integer id;
 
     @Size(min = 2, message = "Nome deve ter ao menos 2 caracteres")
@@ -23,6 +30,7 @@ public class User {
     @ApiModelProperty(notes = "Data de nascimento deve ser menor que a data atual")
     private Date birthDate;
 
+    @Transient
     private List<Post> posts;
 
     protected User() { this.posts = new ArrayList<>(); }
