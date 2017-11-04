@@ -1,16 +1,27 @@
 package com.cursospringcloud.restful.webservices.restfulwebservices.post;
 
+import com.cursospringcloud.restful.webservices.restfulwebservices.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
 public class Post {
 
+    @Id
+    @GeneratedValue
     private Integer id;
 
     private String description;
 
     private Date dateCreated;
 
-    protected Post() { this.dateCreated = new Date(); }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+
+    protected Post() { }
 
     public Post(String description) {
         this.description = description;
@@ -37,4 +48,25 @@ public class Post {
         return dateCreated;
     }
 
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", dateCreated=" + dateCreated +
+                ", user=" + user +
+                '}';
+    }
 }

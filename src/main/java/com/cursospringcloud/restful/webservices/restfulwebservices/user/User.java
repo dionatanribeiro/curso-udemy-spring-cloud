@@ -4,10 +4,7 @@ import com.cursospringcloud.restful.webservices.restfulwebservices.post.Post;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -30,7 +27,7 @@ public class User {
     @ApiModelProperty(notes = "Data de nascimento deve ser menor que a data atual")
     private Date birthDate;
 
-    @Transient
+    @OneToMany(mappedBy = "user")
     private List<Post> posts;
 
     protected User() { this.posts = new ArrayList<>(); }

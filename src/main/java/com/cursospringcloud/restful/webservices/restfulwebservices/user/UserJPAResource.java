@@ -3,6 +3,7 @@ package com.cursospringcloud.restful.webservices.restfulwebservices.user;
 import com.cursospringcloud.restful.webservices.restfulwebservices.exception.PostNotFoundException;
 import com.cursospringcloud.restful.webservices.restfulwebservices.exception.UserNotFoundException;
 import com.cursospringcloud.restful.webservices.restfulwebservices.post.Post;
+import com.cursospringcloud.restful.webservices.restfulwebservices.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -22,10 +23,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class UserJPAResource {
 
     @Autowired
-    private UserDaoService service;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private PostRepository postRepository;
 
     @GetMapping("/jpa/users")
     public List<User> retrieveAllUsers() {
@@ -67,33 +68,47 @@ public class UserJPAResource {
 
     @GetMapping("/jpa/users/{id}/posts")
     public List<Post> retrieveAllPostsForUser(@PathVariable int id) {
-        List<Post> posts = service.findAllPostsByUser(id);
+        Optional<User> userOpt = userRepository.findById(id);
 
-        if (posts.isEmpty()) {
-            throw new PostNotFoundException("user id-" + id);
+        if (!userOpt.isPresent()) {
+            throw new UserNotFoundException("id-" + id);
         }
 
-        return posts;
+        return userOpt.get().getPosts();
     }
 
     @GetMapping("/jpa/users/{id}/posts/{post_id}")
     public Post retrievePostByUser(@PathVariable int id, @PathVariable("post_id") int postId) {
-        Post post = service.findOnePostByUser(id, postId);
+        Optional<User> userOpt = userRepository.findById(id);
 
-        if (post == null) {
+        if (!userOpt.isPresent()) {
+            throw new UserNotFoundException("id-" + id);
+        }
+
+        Optional<Post> postOpt = postRepository.findById(postId);
+
+        if (!postOpt.isPresent()) {
             throw new PostNotFoundException("user id-" + id + " post id-" + postId);
         }
 
-        return post;
+        return postOpt.get();
     }
 
     @PostMapping("/jpa/users/{id}/posts")
     public ResponseEntity<Object> createPostForUser(@PathVariable int id, @RequestBody Post post) {
-        Post postSaved = service.savePost(id, post);
+        Optional<User> userOpt = userRepository.findById(id);
+
+        if (!userOpt.isPresent()) {
+            throw new UserNotFoundException("id-" + id);
+        }
+
+        User user = userOpt.get();
+        post.setUser(user);
+        postRepository.save(post);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{post_id}")
-                .buildAndExpand(postSaved.getId())
+                .buildAndExpand(post.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
     }
