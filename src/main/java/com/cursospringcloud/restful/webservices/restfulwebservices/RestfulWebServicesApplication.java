@@ -39,6 +39,10 @@ public class RestfulWebServicesApplication {
 	public ResourceBundleMessageSource messageSource() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setBasename("messages");
+
+		// desabilita locale default pela linguagem do sistema do servidor
+		messageSource.setFallbackToSystemLocale(false);
+
 		return messageSource;
 	}
 
