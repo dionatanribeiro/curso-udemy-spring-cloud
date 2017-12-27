@@ -46,14 +46,15 @@ public class UserResource {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User savedUser = service.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(savedUser.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+
+        return ResponseEntity.created(location).body(savedUser);
     }
 
     @DeleteMapping("/users/{id}")
